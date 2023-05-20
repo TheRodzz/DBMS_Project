@@ -1,6 +1,6 @@
 -- creating the database
-CREATE DATABASE ottplatform;
-USE ottplatform;
+-- CREATE DATABASE ottplatform;
+-- USE ottplatform;
 
 -- creating tables
 CREATE TABLE User (
@@ -21,7 +21,7 @@ CREATE TABLE Languages(
     tid INT,
     language VARCHAR(50) NOT NULL,
     PRIMARY KEY (tid,language),
-    FOREIGN KEY (tid) REFERENCES Media (tid)
+    FOREIGN KEY (tid) REFERENCES Media (tid) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE Ratings (
@@ -29,24 +29,31 @@ CREATE TABLE Ratings (
     uid INT NOT NULL,
     rating DECIMAL(2,1) NOT NULL,
     PRIMARY KEY(tid,uid),
-    FOREIGN KEY (tid) REFERENCES Media(tid),
-    FOREIGN KEY (uid) REFERENCES User(uid)
+    FOREIGN KEY (tid) REFERENCES Media(tid) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (uid) REFERENCES User(uid) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE View_History (
     tid INT NOT NULL,
     uid INT NOT NULL,
     watched_on TIMESTAMP,
-    PRIMARY KEY(tid,uid,watched_on),
-    FOREIGN KEY (tid) REFERENCES Media(tid),
-    FOREIGN KEY (uid) REFERENCES User(uid)
+    PRIMARY KEY(tid, uid, watched_on),
+    FOREIGN KEY (tid) REFERENCES Media(tid) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (uid) REFERENCES User(uid) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- Populating User table
-INSERT INTO User (name, user_name, password, isAdmin) VALUES
-  ('John Doe', 'johndoe', 'password123', 0),
-  ('Jane Smith', 'janesmith', 'pass456', 1),
-  ('Michael Johnson', 'mjohnson', 'securepass', 0);
+INSERT INTO User (name, user_name, password, isAdmin)
+VALUES ('Rajesh Kumar', 'rajesh123', 'password1', 1),
+       ('Priya Sharma', 'priya456', 'password2', 1),
+       ('Amit Patel', 'amit789', 'password3', 0),
+       ('Sneha Gupta', 'sneha101', 'password4', 0),
+       ('Naveen Reddy', 'naveen999', 'password5', 0),
+       ('Anita Verma', 'anita246', 'password6', 0),
+       ('Rahul Singh', 'rahul789', 'password7', 0),
+       ('Pooja Mishra', 'pooja111', 'password8', 0),
+       ('Manish Mehta', 'manish456', 'password9', 0),
+       ('Divya Sharma', 'divya789', 'password10', 0);
 
 -- Populating Media table
 INSERT INTO Media (title, release_date) VALUES
@@ -77,3 +84,4 @@ INSERT INTO View_History (tid, uid, watched_on) VALUES
   (1, 2, '2022-02-18 14:45:00'),
   (2, 1, '2021-08-01 20:15:00'),
   (3, 3, '2020-07-10 12:00:00');
+
