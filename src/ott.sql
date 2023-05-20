@@ -18,7 +18,7 @@ CREATE TABLE Media (
 );
 
 CREATE TABLE Languages(
-    tid INT,
+    tid INT, 
     language VARCHAR(50) NOT NULL,
     PRIMARY KEY (tid,language),
     FOREIGN KEY (tid) REFERENCES Media (tid) ON UPDATE CASCADE ON DELETE CASCADE
