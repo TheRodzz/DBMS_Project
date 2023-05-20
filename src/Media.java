@@ -1,11 +1,14 @@
 public class Media {
-    int tid;
-    String title,date;
+    int tid,duration;
+    String title,release_date,poster_url,trailer_url;
 
-    public Media(int tid, String title, String date) {
+    public Media(int tid, int duration, String title, String release_date, String poster_url, String trailer_url) {
         this.tid = tid;
+        this.duration = duration;
         this.title = title;
-        this.date = date;
+        this.release_date = release_date;
+        this.poster_url = poster_url;
+        this.trailer_url = trailer_url;
     }
 
     public int getTid() {
@@ -16,6 +19,14 @@ public class Media {
         this.tid = tid;
     }
 
+    public int getDuration() {
+        return this.duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     public String getTitle() {
         return this.title;
     }
@@ -24,11 +35,27 @@ public class Media {
         this.title = title;
     }
 
-    public String getDate() {
-        return this.date;
+    public String getRelease_date() {
+        return this.release_date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setRelease_date(String release_date) {
+        this.release_date = release_date;
+    }
+
+    public String getPoster_url() {
+        return this.poster_url;
+    }
+
+    public void setPoster_url(String poster_url) {
+        this.poster_url = poster_url;
+    }
+
+    public String getTrailer_url() {
+        return this.trailer_url;
+    }
+
+    public void setTrailer_url(String trailer_url) {
+        this.trailer_url = trailer_url;
     }
 }
