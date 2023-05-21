@@ -2,7 +2,7 @@ import java.sql.Date;
 import java.util.Scanner;
 
 public class InputHandler {
-    
+
     public static Media getMediaInput(Scanner scanner) {
 
         System.out.println("Enter the media duration:");
@@ -22,5 +22,20 @@ public class InputHandler {
         String trailerUrl = scanner.nextLine();
 
         return new Media(0, duration, title, releaseDate, posterUrl, trailerUrl);
+    }
+
+    public static String pwdInputAndConfirm(Scanner sc) {
+        String pass, pass1;
+        while (true) {
+            System.out.println("Enter new password");
+            pass = sc.nextLine();
+            System.out.println("Re-enter password");
+            pass1 = sc.nextLine();
+            if (!pass.equals(pass1)) {
+                System.out.println("Password mismatch. Try again");
+            } else
+                break;
+        }
+        return pass;
     }
 }

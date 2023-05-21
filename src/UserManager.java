@@ -44,16 +44,19 @@ public class UserManager {
 
                 }
 
-                while (true) {
-                    System.out.println("Enter new password");
-                    pass = sc.nextLine();
-                    System.out.println("Re-enter password");
-                    pass1 = sc.nextLine();
-                    if (!pass.equals(pass1)) {
-                        System.out.println("Password mismatch. Try again");
-                    } else
-                        break;
-                }
+                // while (true) {
+                //     System.out.println("Enter new password");
+                //     pass = sc.nextLine();
+                //     System.out.println("Re-enter password");
+                //     pass1 = sc.nextLine();
+                //     if (!pass.equals(pass1)) {
+                //         System.out.println("Password mismatch. Try again");
+                //     } else
+                //         break;
+                // }
+
+                pass=InputHandler.pwdInputAndConfirm(sc);
+
                 String sql = "INSERT INTO User (name, user_name, password, isAdmin) VALUES (?,?, ?, ?)";
                 PreparedStatement stmt1 = null;
                 try {
