@@ -1,6 +1,6 @@
 public class Media {
-    int tid,duration;
-    String title,release_date,poster_url,trailer_url;
+    int tid, duration;
+    String title, poster_url, trailer_url, release_date;
 
     public Media(int tid, int duration, String title, String release_date, String poster_url, String trailer_url) {
         this.tid = tid;
@@ -9,6 +9,16 @@ public class Media {
         this.release_date = release_date;
         this.poster_url = poster_url;
         this.trailer_url = trailer_url;
+    }
+
+    @Override
+    public String toString() {
+        return "tid= " + getTid() +
+                ", duration= " + getDuration() +
+                ", title= " + getTitle() +
+                ", poster_url= " + getPoster_url() +
+                ", trailer_url= " + getTrailer_url() +
+                ", release_date= " + getRelease_date();
     }
 
     public int getTid() {
@@ -58,4 +68,5 @@ public class Media {
     public void setTrailer_url(String trailer_url) {
         this.trailer_url = trailer_url;
     }
+
 }
