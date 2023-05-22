@@ -44,7 +44,7 @@ public class UserManager {
 
                 }
 
-                pass = InputHandler.pwdInputAndConfirm(sc);
+                pass = InputHandler.pwdInputAndConfirm();
 
                 String sql = "INSERT INTO User (name, user_name, password, isAdmin) VALUES (?,?, ?, ?)";
                 PreparedStatement stmt1 = null;

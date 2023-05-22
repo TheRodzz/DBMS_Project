@@ -1,29 +1,30 @@
 import java.util.Scanner;
 
 public class InputHandler {
+    static Scanner sc = new Scanner(System.in);
 
-    public static Media getMediaInput(Scanner scanner) {
+    public static Media getMediaInput() {
 
         System.out.println("Enter the media duration:");
-        int duration = scanner.nextInt();
-        scanner.nextLine(); // Consume the newline character
+        int duration = sc.nextInt();
+        sc.nextLine(); // Consume the newline character
 
         System.out.println("Enter the media title:");
-        String title = scanner.nextLine();
+        String title = sc.nextLine();
 
         System.out.println("Enter the media release date in yyyy-MM-dd format:");
-        String releaseDate = scanner.nextLine();
+        String releaseDate = sc.nextLine();
 
         System.out.println("Enter the media poster URL:");
-        String posterUrl = scanner.nextLine();
+        String posterUrl = sc.nextLine();
 
         System.out.println("Enter the media trailer URL:");
-        String trailerUrl = scanner.nextLine();
+        String trailerUrl = sc.nextLine();
 
         return new Media(0, duration, title, releaseDate, posterUrl, trailerUrl);
     }
 
-    public static String pwdInputAndConfirm(Scanner sc) {
+    public static String pwdInputAndConfirm() {
         String pass, pass1;
         while (true) {
             System.out.println("Enter new password");
@@ -38,7 +39,7 @@ public class InputHandler {
         return pass;
     }
 
-    public static double getRatingInput(Scanner sc) {
+    public static double getRatingInput() {
         double rating = 0;
         while (true) {
             System.out.println("Enter rating");
@@ -53,13 +54,13 @@ public class InputHandler {
         }
     }
 
-    public static int getIDinput(Scanner sc) {
+    public static int getIDinput() {
         int id = sc.nextInt();
         sc.nextLine(); // consume new line character
         return id;
     }
 
-    public static String getNonEmptyString(Scanner sc) {
+    public static String getNonEmptyString() {
         while (true) {
 
             String inp = sc.nextLine();
@@ -70,39 +71,39 @@ public class InputHandler {
         }
     }
 
-    public static String getStringInput(Scanner sc) {
+    public static String getStringInput() {
         return sc.nextLine();
     }
 
-    public static Media updateMedia(Scanner scanner, Media media) {
+    public static Media updateMedia(Media media) {
         System.out.println("Enter the new title (or press Enter to keep the current value):");
-        String newTitle = scanner.nextLine();
+        String newTitle = sc.nextLine();
         if (!newTitle.isEmpty()) {
             media.setTitle(newTitle);
         }
 
         System.out.println(
                 "Enter the new release date in the format (yyyy-MM-dd) (or press Enter to keep the current value):");
-        String newReleaseDateStr = scanner.nextLine();
+        String newReleaseDateStr = sc.nextLine();
         if (!newReleaseDateStr.isEmpty()) {
             media.setRelease_date(newReleaseDateStr);
         }
 
         System.out.println("Enter the new duration in minutes (or press Enter to keep the current value):");
-        String newDurationStr = scanner.nextLine();
+        String newDurationStr = sc.nextLine();
         if (!newDurationStr.isEmpty()) {
             int newDuration = Integer.parseInt(newDurationStr);
             media.setDuration(newDuration);
         }
 
         System.out.println("Enter the new poster URL (or press Enter to keep the current value):");
-        String newPosterUrl = scanner.nextLine();
+        String newPosterUrl = sc.nextLine();
         if (!newPosterUrl.isEmpty()) {
             media.setPoster_url(newPosterUrl);
         }
 
         System.out.println("Enter the new trailer URL (or press Enter to keep the current value):");
-        String newTrailerUrl = scanner.nextLine();
+        String newTrailerUrl = sc.nextLine();
         if (!newTrailerUrl.isEmpty()) {
             media.setTrailer_url(newTrailerUrl);
         }

@@ -31,32 +31,31 @@ public class EndUser implements UserInterface {
             else if (choice == 1) {
                 this.listMedia();
             } else if (choice == 2) {
-                this.watchMedia(sc);
+                this.watchMedia();
             } else if (choice == 3) {
                 this.getHistory();
             } else if (choice == 4) {
                 this.getWatchTime();
             } else if (choice == 5) {
-                this.updateProfile(sc);
+                this.updateProfile();
             } else if (choice == 6) {
-                this.addRating(sc);
+                this.addRating();
             } else if (choice == 7) {
-                this.filterByGenre(sc);
+                this.filterByGenre();
             } else if (choice == 8) {
-                this.filterByLanguage(sc);
+                this.filterByLanguage();
             } else if (choice == 9) {
-                this.searchByTitle(sc);
+                this.searchByTitle();
             } else if (choice == 10) {
                 this.getAvgRating();
             }
         }
     }
 
-    private void watchMedia(Scanner sc) {
+    private void watchMedia() {
         System.out.println("Enter the ID of the media you want to watch");
         this.listMedia();
-        int tid = sc.nextInt();
-        sc.nextLine(); // consume new line char
+        int tid = InputHandler.getIDinput();
         Connection connection = null;
         PreparedStatement stmt = null;
         try {
@@ -69,6 +68,7 @@ public class EndUser implements UserInterface {
             stmt.setTimestamp(3, timestamp);
             int rows = stmt.executeUpdate();
             if (rows == 1) {
+                DBConnection.commitTransaction(connection);
                 System.out.println("You watched media with ID = " + tid);
             } else {
                 System.out.println("Failed to watch media ");
@@ -136,7 +136,7 @@ public class EndUser implements UserInterface {
         }
     }
 
-    private void updateProfile(Scanner sc) {
+    private void updateProfile() {
         Connection connection = null;
         PreparedStatement stmt = null;
         User oldUser = this.user;
@@ -145,21 +145,21 @@ public class EndUser implements UserInterface {
             System.out.println(this.user);
 
             System.out.println("Enter the new full name (or press Enter to keep the current value):");
-            String newName = sc.nextLine();
+            String newName = InputHandler.getStringInput();
             if (!newName.isEmpty()) {
                 this.user.setName(newName);
             }
 
             System.out.println("Enter the new user name (or press Enter to keep the current value):");
-            String newUserName = sc.nextLine();
+            String newUserName = InputHandler.getStringInput();
             if (!newUserName.isEmpty()) {
                 this.user.setUser_name(newUserName);
             }
 
             System.out.println("Do you want to change your password? Y/N");
-            String choice = sc.nextLine();
+            String choice = InputHandler.getNonEmptyString();
             if (choice.charAt(0) == 'Y' || choice.charAt(0) == 'y') {
-                String newPass = InputHandler.pwdInputAndConfirm(sc);
+                String newPass = InputHandler.pwdInputAndConfirm();
                 this.user.setPassword(newPass);
             }
 
@@ -173,6 +173,7 @@ public class EndUser implements UserInterface {
 
             int rows = stmt.executeUpdate();
             if (rows == 1) {
+                DBConnection.commitTransaction(connection);
                 System.out.println("Profile updated successfully. Here is the updated profile:");
                 System.out.println(this.user);
             } else {
@@ -190,14 +191,13 @@ public class EndUser implements UserInterface {
         }
     }
 
-    private void addRating(Scanner sc) {
+    private void addRating() {
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
         System.out.println("Enter the ID of the media item you want to give rating to");
         this.listMedia();
-        int tid = sc.nextInt();
-        sc.nextLine(); // consume new line char
+        int tid = InputHandler.getIDinput();
         try {
             String check = "SELECT uid FROM View_History WHERE uid = ? AND tid = ?";
             connection = DBConnection.getConnection();
@@ -209,7 +209,7 @@ public class EndUser implements UserInterface {
             if (!resultSet.next()) {
                 System.out.println("You cannot give rating to media you have not watched");
             } else {
-                double rating = InputHandler.getRatingInput(sc);
+                double rating = InputHandler.getRatingInput();
                 String sql = "INSERT INTO Ratings VALUES (?,?,?)";
                 stmt = connection.prepareStatement(sql);
                 stmt.setInt(1, tid);
@@ -217,6 +217,7 @@ public class EndUser implements UserInterface {
                 stmt.setDouble(3, rating);
                 int rows = stmt.executeUpdate();
                 if (rows == 1) {
+                    DBConnection.commitTransaction(connection);
                     System.out.println("Rating added successfully");
                 } else {
                     System.out.println("Falied to add rating");

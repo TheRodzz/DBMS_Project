@@ -4,14 +4,14 @@ import java.util.Scanner;
 public interface UserInterface {
     void run(Scanner scanner);
 
-    default void filterByGenre(Scanner sc) {
+    default void filterByGenre() {
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
         try {
             System.out.println("Select the ID of genre you want to filter by");
             this.listGenres();
-            int gid = InputHandler.getIDinput(sc);
+            int gid = InputHandler.getIDinput();
 
             String sql = "SELECT title FROM Media m,Media_Genres mg WHERE m.tid=mg.tid AND mg.gid = ?";
             connection = DBConnection.getConnection();
@@ -37,14 +37,14 @@ public interface UserInterface {
         }
     }
 
-    default void filterByLanguage(Scanner sc) {
+    default void filterByLanguage() {
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
         try {
             System.out.println("Select the ID of language you want to filter by");
             this.displayAllLanguages();
-            int lid = InputHandler.getIDinput(sc);
+            int lid = InputHandler.getIDinput();
 
             String sql = "SELECT title FROM Media m,Media_Languages lg WHERE m.tid=lg.tid AND lg.lid = ? ";
             connection = DBConnection.getConnection();
@@ -70,14 +70,14 @@ public interface UserInterface {
         }
     }
 
-    default void searchByTitle(Scanner sc) {
+    default void searchByTitle() {
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
         try {
             // Get the search keyword from the user
             System.out.print("Enter the title to search: ");
-            String searchKeyword = InputHandler.getNonEmptyString(sc);
+            String searchKeyword = InputHandler.getNonEmptyString();
 
             // Create the SQL query
             String sql = "SELECT title,tid FROM Media WHERE title LIKE ?";
