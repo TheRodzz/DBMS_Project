@@ -209,12 +209,12 @@ public class EndUser implements UserInterface {
             if (!resultSet.next()) {
                 System.out.println("You cannot give rating to media you have not watched");
             } else {
-                int rating = InputHandler.getRatingInput(sc);
-                String sql = "INSERT INTO Rating VALUES (?,?,?)";
+                double rating = InputHandler.getRatingInput(sc);
+                String sql = "INSERT INTO Ratings VALUES (?,?,?)";
                 stmt = connection.prepareStatement(sql);
                 stmt.setInt(1, tid);
                 stmt.setInt(2, this.user.getUid());
-                stmt.setInt(3, rating);
+                stmt.setDouble(3, rating);
                 int rows = stmt.executeUpdate();
                 if (rows == 1) {
                     System.out.println("Rating added successfully");
