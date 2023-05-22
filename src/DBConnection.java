@@ -1,21 +1,22 @@
 import java.sql.*;
 
-public class DBConnection {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/ottplatform?characterEncoding=latin1&useConfigs=maxPerformance";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "7349";
+public class DBConnection{
+    // private static final String DB_URL = "jdbc:mysql://localhost:3306/ottplatform?characterEncoding=latin1&useConfigs=maxPerformance";
+    // private static final String USERNAME = "root";
+    // private static final String PASSWORD = "7349";
+
+    private static Connection connection;
 
     public static Connection getConnection() throws SQLException {
-        Connection connection = null;
         try {
-            // Register the JDBC driver
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            if (connection == null || connection.isClosed()) {
+                // Register the JDBC driver
+                Class.forName("com.mysql.cj.jdbc.Driver");
 
-            // Open a connection
-            connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            connection.setAutoCommit(false); // Disable auto-commit
-
-            // System.out.println("Connected to the database");
+                // Create a new connection
+                connection = DriverManager.getConnection(DBConfiguration.getDbUrl(), DBConfiguration.getUsername(), DBConfiguration.getPassword());
+                connection.setAutoCommit(false); // Disable auto-commit
+            }
         } catch (ClassNotFoundException e) {
             System.out.println("Could not find database driver: " + e.getMessage());
         } catch (SQLException e) {
@@ -68,6 +69,26 @@ public class DBConnection {
         } catch (SQLException e) {
             System.out.println("An error occurred while closing the statement: " + e.getMessage());
             // Log the exception
+        }
+    }
+        
+    public static void commitTransaction(Connection connection) {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to commit the transaction: " + e.getMessage());
+        }
+    }
+
+    public static void rollbackTransaction(Connection connection) {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to rollback the transaction: " + e.getMessage());
         }
     }
 
