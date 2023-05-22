@@ -26,16 +26,30 @@ cd DBMS_Project
 
 3. Set up the database:
 
-- Create a new database in MySQL.
-- Execute the SQL script `ott.sql` located in the `src` directory to create the necessary tables.
+- Create a new database in MySQL using the following command:
+```
+CREATE DATABASE ottplatform;
+```
 
-4. Build the project:
+- Execute the SQL script `tables.sql` located in the `src` directory to create the necessary tables:
+```
+SOURCE <path-to-project-folder>/DBMS_Project/src/ott.sql;
+```
+- Optionally, if you want to test the project with some sample data, execute the `sample_data.sql` script:
+```
+SOURCE <path-to-project-folder>/DBMS_Project/src/sample_data.sql;
+```
+4. Update database login credentials
+- Open the `DBConfiguration.java` file in your preferred IDE or text editor.
+- Update the `USERNAME` and `PASSWORD` strings according to your system.
+
+5. Build the project:
 
 ```
 javac -d bin -cp lib/* src/*.java
 ```
 
-5. Run the application:
+6. Run the application:
 
 ```
 java -cp bin:lib/* Main
@@ -48,19 +62,21 @@ The project structure is as follows:
 ```
 ott-platform/
 ├─ src/
+|  ├─ tables.sql
+|  ├─ sample_data.sql
 │  ├─ DBConnection.java
 │  ├─ UserManager.java
 │  ├─ Main.java
 │  └─ ...
 ├─ lib/
 │  └─ mysql-connector-java.jar
-├─ database.sql
 └─ README.md
 ```
 
 - `src/`: Contains the source code files.
 - `lib/`: Contains the MySQL Connector/J JDBC driver JAR file.
-- `database.sql`: SQL script to create the necessary database tables.
+- `tables.sql`: SQL script to create the necessary database tables.
+- `sample_data.sql`: SQL script to populate database with sample data.
 - `README.md`: Project documentation.
 
 ## Usage
