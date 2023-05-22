@@ -38,11 +38,11 @@ public class InputHandler {
         return pass;
     }
 
-    public static int getRatingInput(Scanner sc) {
-        int rating = 0;
+    public static double getRatingInput(Scanner sc) {
+        double rating = 0;
         while (true) {
             System.out.println("Enter rating");
-            rating = sc.nextInt();
+            rating = sc.nextDouble();
             sc.nextLine(); // consume newline char
             if (rating >= 0 && rating <= 5)
                 return rating;
