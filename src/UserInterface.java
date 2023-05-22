@@ -26,6 +26,7 @@ public interface UserInterface {
                 while (true) {
                     String title = resultSet.getString("title");
                     System.out.println(title);
+                    if(!resultSet.next()) break;
                 }
             }
 
@@ -47,7 +48,7 @@ public interface UserInterface {
             int lid = sc.nextInt();
             sc.nextLine(); // consume new line char
 
-            String sql = "SELECT title FROM Media m,Media_Languages lg WHERE m.tid=lg.tid AND lg.lid = ?";
+            String sql = "SELECT title FROM Media m,Media_Languages lg WHERE m.tid=lg.tid AND lg.lid = ? ";
             connection = DBConnection.getConnection();
             stmt = connection.prepareStatement(sql);
             stmt.setInt(1, lid);
@@ -59,6 +60,7 @@ public interface UserInterface {
                 while (true) {
                     String title = resultSet.getString("title");
                     System.out.println(title);
+                    if(!resultSet.next()) break;
                 }
             }
 
@@ -204,7 +206,7 @@ public interface UserInterface {
         ResultSet resultSet = null;
 
         try {
-            String sql = "SELECT lid, language FROM Languages";
+            String sql = "SELECT lid, language FROM Languages ORDER BY lid";
             connection = DBConnection.getConnection();
             stmt = connection.prepareStatement(sql);
             resultSet = stmt.executeQuery();
