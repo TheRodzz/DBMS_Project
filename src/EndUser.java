@@ -47,7 +47,7 @@ public class EndUser implements UserInterface {
             } else if (choice == 9) {
                 this.searchByTitle(sc);
             } else if (choice == 10) {
-                this.getAvgRating(sc);
+                this.getAvgRating();
             }
         }
     }

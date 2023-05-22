@@ -11,8 +11,7 @@ public interface UserInterface {
         try {
             System.out.println("Select the ID of genre you want to filter by");
             this.listGenres();
-            int gid = sc.nextInt();
-            sc.nextLine(); // consume new line char
+            int gid = InputHandler.getIDinput(sc);
 
             String sql = "SELECT title FROM Media m,Media_Genres mg WHERE m.tid=mg.tid AND mg.gid = ?";
             connection = DBConnection.getConnection();
@@ -45,8 +44,7 @@ public interface UserInterface {
         try {
             System.out.println("Select the ID of language you want to filter by");
             this.displayAllLanguages();
-            int lid = sc.nextInt();
-            sc.nextLine(); // consume new line char
+            int lid = InputHandler.getIDinput(sc);
 
             String sql = "SELECT title FROM Media m,Media_Languages lg WHERE m.tid=lg.tid AND lg.lid = ? ";
             connection = DBConnection.getConnection();
@@ -79,7 +77,7 @@ public interface UserInterface {
         try {
             // Get the search keyword from the user
             System.out.print("Enter the title to search: ");
-            String searchKeyword = sc.nextLine();
+            String searchKeyword = InputHandler.getNonEmptyString(sc);
 
             // Create the SQL query
             String sql = "SELECT title,tid FROM Media WHERE title LIKE ?";
@@ -122,7 +120,7 @@ public interface UserInterface {
         }
     }
 
-    default void getAvgRating(Scanner sc) {
+    default void getAvgRating() {
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;

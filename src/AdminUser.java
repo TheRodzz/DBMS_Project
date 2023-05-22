@@ -52,11 +52,11 @@ public class AdminUser implements UserInterface {
                 } else if (choice == 6) {
                     this.addMediaLanguage(sc);
                 } else if (choice == 7) {
-                    this.viewerWatchTimeStats(sc);
+                    this.viewerWatchTimeStats();
                 } else if (choice == 8) {
-                    this.mediaWatchTimeStats(sc);
+                    this.mediaWatchTimeStats();
                 } else if (choice == 9) {
-                    this.performanceReport(sc);
+                    this.performanceReport();
                 } else if (choice == 10) {
                     this.filterByGenre(sc);
                 } else if (choice == 11) {
@@ -64,7 +64,7 @@ public class AdminUser implements UserInterface {
                 } else if (choice == 12) {
                     this.searchByTitle(sc);
                 } else if (choice == 13) {
-                    this.getAvgRating(sc);
+                    this.getAvgRating();
                 }
             }
         } catch (Exception e) {
@@ -91,9 +91,14 @@ public class AdminUser implements UserInterface {
                 System.out.println("The following media has been added successfully: ");
                 System.out.println(m);
             }
+            else {
+                System.out.println("Failed to add media");
+                DBConnection.rollbackTransaction(connection);
+            }
         } catch (Exception e) {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
+            DBConnection.rollbackTransaction(connection);
         } finally {
             DBConnection.closeConnection(connection);
             DBConnection.closeStatement(stmt);
@@ -103,8 +108,7 @@ public class AdminUser implements UserInterface {
     private void deleteMedia(Scanner sc) {
         System.out.println("Select the ID of the media item you want to delete");
         this.listMedia();
-        int tid = sc.nextInt();
-        sc.nextLine(); // consume new line character
+        int tid = InputHandler.getIDinput(sc);
         String sql = "DELETE FROM Media WHERE tid=?";
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -116,8 +120,14 @@ public class AdminUser implements UserInterface {
             if (rows == 1) {
                 System.out.println("Media deleted successfully");
             }
+            else {
+                System.out.println("Failed to delete media");
+                DBConnection.rollbackTransaction(connection);
+            }
         } catch (Exception e) {
-
+            System.out.println("An error occurred while accessing the database:");
+            System.out.println("Error details: " + e.getMessage());
+            DBConnection.rollbackTransaction(connection);
         } finally {
             DBConnection.closeResources(connection, stmt, null);
         }
@@ -157,47 +167,17 @@ public class AdminUser implements UserInterface {
                 System.out.println("Current media details:");
                 System.out.println(media);
 
-                System.out.println("Enter the new title (or press Enter to keep the current value):");
-                String newTitle = scanner.nextLine();
-                if (!newTitle.isEmpty()) {
-                    media.setTitle(newTitle);
-                }
-
-                System.out.println(
-                        "Enter the new release date in the format (yyyy-MM-dd) (or press Enter to keep the current value):");
-                String newReleaseDateStr = scanner.nextLine();
-                if (!newReleaseDateStr.isEmpty()) {
-                    media.setRelease_date(newReleaseDateStr);
-                }
-
-                System.out.println("Enter the new duration in minutes (or press Enter to keep the current value):");
-                String newDurationStr = scanner.nextLine();
-                if (!newDurationStr.isEmpty()) {
-                    int newDuration = Integer.parseInt(newDurationStr);
-                    media.setDuration(newDuration);
-                }
-
-                System.out.println("Enter the new poster URL (or press Enter to keep the current value):");
-                String newPosterUrl = scanner.nextLine();
-                if (!newPosterUrl.isEmpty()) {
-                    media.setPoster_url(newPosterUrl);
-                }
-
-                System.out.println("Enter the new trailer URL (or press Enter to keep the current value):");
-                String newTrailerUrl = scanner.nextLine();
-                if (!newTrailerUrl.isEmpty()) {
-                    media.setTrailer_url(newTrailerUrl);
-                }
+                Media updatedMedia=InputHandler.updateMedia(scanner,media);
 
                 // Update the media item in the database
                 String updateSql = "UPDATE Media SET title = ?, release_date = ?, duration = ?, poster_url = ?, trailer_url = ? WHERE tid = ?";
                 stmt = connection.prepareStatement(updateSql);
-                stmt.setString(1, media.getTitle());
-                stmt.setDate(2, Date.valueOf(media.getRelease_date()));
-                stmt.setInt(3, media.getDuration());
-                stmt.setString(4, media.getPoster_url());
-                stmt.setString(5, media.getTrailer_url());
-                stmt.setInt(6, media.getTid());
+                stmt.setString(1, updatedMedia.getTitle());
+                stmt.setDate(2, Date.valueOf(updatedMedia.getRelease_date()));
+                stmt.setInt(3, updatedMedia.getDuration());
+                stmt.setString(4, updatedMedia.getPoster_url());
+                stmt.setString(5, updatedMedia.getTrailer_url());
+                stmt.setInt(6, updatedMedia.getTid());
 
                 int rows = stmt.executeUpdate();
                 if (rows == 1) {
@@ -206,6 +186,8 @@ public class AdminUser implements UserInterface {
                     System.out.println(media);
                 } else {
                     System.out.println("Failed to update the media item with tid " + tid + ".");
+                    DBConnection.rollbackTransaction(connection);
+
                 }
             } else {
                 System.out.println("No media item found with tid " + tid + ".");
@@ -213,6 +195,7 @@ public class AdminUser implements UserInterface {
         } catch (Exception e) {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
+            DBConnection.rollbackTransaction(connection);
         } finally {
             DBConnection.closeResources(connection, stmt, resultSet);
         }
@@ -234,6 +217,7 @@ public class AdminUser implements UserInterface {
                 System.out.println("New language " + lang + " has been added succuessfully");
             } else {
                 System.out.println("Failed to add language " + lang);
+                DBConnection.rollbackTransaction(connection);
             }
         } catch (Exception e) {
             System.out.println("An error occurred while accessing the database:");
@@ -251,11 +235,11 @@ public class AdminUser implements UserInterface {
         try {
             System.out.println("Enter the Media ID (tid):");
             this.listMedia();
-            int tid = sc.nextInt();
+            int tid = InputHandler.getIDinput(sc);
 
             System.out.println("Enter the Language ID (lid):");
             this.displayAllLanguages();
-            int lid = sc.nextInt();
+            int lid = InputHandler.getIDinput(sc);
 
             // Check if the media and language IDs exist in their respective tables before
             // adding them to the Media_Languages table
@@ -277,20 +261,23 @@ public class AdminUser implements UserInterface {
                     System.out.println("New language added for the selected media successfully.");
                 } else {
                     System.out.println("Failed to add the media-language mapping.");
+                    DBConnection.rollbackTransaction(connection);
                 }
             } else {
                 System.out.println("Media or Language does not exist. Please make sure to enter valid IDs.");
+
             }
 
         } catch (Exception e) {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
+            DBConnection.rollbackTransaction(connection);
         } finally {
             DBConnection.closeResources(connection, stmt, resultSet);
         }
     }
 
-    private void viewerWatchTimeStats(Scanner scanner) {
+    private void viewerWatchTimeStats() {
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultset = null;
@@ -314,7 +301,7 @@ public class AdminUser implements UserInterface {
         }
     }
 
-    private void mediaWatchTimeStats(Scanner scanner) {
+    private void mediaWatchTimeStats() {
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultset = null;
@@ -338,7 +325,7 @@ public class AdminUser implements UserInterface {
         }
     }
 
-    private void performanceReport(Scanner scanner) {
+    private void performanceReport() {
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultset = null;
