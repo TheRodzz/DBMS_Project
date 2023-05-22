@@ -16,6 +16,7 @@ public class AdminUser implements UserInterface {
     public void run(Scanner sc) {
         try {
             while (true) {
+                System.out.println("-------------------------------------");
                 System.out.println("Select your choice");
                 System.out.println("0. Logout");
                 System.out.println("1. List the available media");
@@ -28,6 +29,7 @@ public class AdminUser implements UserInterface {
                 System.out.println("8. Get each media item's total play time across all users");
                 System.out.println("9. Get a performance report");
 
+                System.out.println("-------------------------------------");
                 int choice;
                 try {
                     choice = sc.nextInt();
@@ -72,7 +74,11 @@ public class AdminUser implements UserInterface {
         }
     }
 
+    /**
+     * Adds a new media item to the database.
+     */
     private void addMedia() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         try {
@@ -91,8 +97,7 @@ public class AdminUser implements UserInterface {
                 System.out.println("The following media has been added successfully: ");
                 DBConnection.commitTransaction(connection);
                 System.out.println(m);
-            }
-            else {
+            } else {
                 System.out.println("Failed to add media");
                 DBConnection.rollbackTransaction(connection);
             }
@@ -103,10 +108,15 @@ public class AdminUser implements UserInterface {
         } finally {
             DBConnection.closeConnection(connection);
             DBConnection.closeStatement(stmt);
+            System.out.println("-------------------------------------");
         }
     }
 
+    /**
+     * Deletes a media item from the database.
+     */
     private void deleteMedia() {
+        System.out.println("-------------------------------------");
         System.out.println("Select the ID of the media item you want to delete");
         this.listMedia();
         int tid = InputHandler.getIDinput();
@@ -121,8 +131,7 @@ public class AdminUser implements UserInterface {
             if (rows == 1) {
                 System.out.println("Media deleted successfully");
                 DBConnection.commitTransaction(connection);
-            }
-            else {
+            } else {
                 System.out.println("Failed to delete media");
                 DBConnection.rollbackTransaction(connection);
             }
@@ -132,10 +141,15 @@ public class AdminUser implements UserInterface {
             DBConnection.rollbackTransaction(connection);
         } finally {
             DBConnection.closeResources(connection, stmt, null);
+            System.out.println("-------------------------------------");
         }
     }
 
+    /**
+     * Updates a media item in the database.
+     */
     public void updateMedia() {
+        System.out.println("-------------------------------------");
         System.out.println("Enter the tid (media ID) of the media item to update:");
         this.listMedia();
         int tid = InputHandler.getIDinput();
@@ -168,7 +182,7 @@ public class AdminUser implements UserInterface {
                 System.out.println("Current media details:");
                 System.out.println(media);
 
-                Media updatedMedia=InputHandler.updateMedia(media);
+                Media updatedMedia = InputHandler.updateMedia(media);
 
                 // Update the media item in the database
                 String updateSql = "UPDATE Media SET title = ?, release_date = ?, duration = ?, poster_url = ?, trailer_url = ? WHERE tid = ?";
@@ -199,11 +213,16 @@ public class AdminUser implements UserInterface {
             System.out.println("Error details: " + e.getMessage());
             DBConnection.rollbackTransaction(connection);
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, resultSet);
         }
     }
 
+    /**
+     * Adds a new language to the database.
+     */
     private void addNewLanguage() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
@@ -226,11 +245,20 @@ public class AdminUser implements UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, resultSet);
         }
     }
 
+    /**
+     * Adds a new language for a selected media.
+     * Prompts the user to enter the media ID and language ID.
+     * Checks if the provided IDs exist in their respective tables before adding the
+     * mapping to the Media_Languages table.
+     * Prints success or failure messages based on the execution result.
+     */
     private void addMediaLanguage() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
@@ -277,11 +305,19 @@ public class AdminUser implements UserInterface {
             System.out.println("Error details: " + e.getMessage());
             DBConnection.rollbackTransaction(connection);
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, resultSet);
         }
     }
 
+    /**
+     * Retrieves and displays the total watch time for each user.
+     * Executes a SQL query to calculate the sum of the duration for each user from
+     * the Media, View_History, and User tables.
+     * Prints the total watch time for each user in minutes.
+     */
     private void viewerWatchTimeStats() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultset = null;
@@ -305,7 +341,14 @@ public class AdminUser implements UserInterface {
         }
     }
 
+    /**
+     * Retrieves and displays the total watch time for each media.
+     * Executes a SQL query to calculate the product of the number of viewers and
+     * the duration for each media from the View_History and Media tables.
+     * Prints the total watch time for each media in minutes.
+     */
     private void mediaWatchTimeStats() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultset = null;
@@ -324,12 +367,20 @@ public class AdminUser implements UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeConnection(connection);
             DBConnection.closeStatement(stmt);
         }
     }
 
+    /**
+     * Generates a performance report for the platform.
+     * Executes SQL queries to calculate the total watch time and the total number
+     * of views on the platform.
+     * Prints the total platform watch time and total platform views.
+     */
     private void performanceReport() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultset = null;
@@ -354,7 +405,9 @@ public class AdminUser implements UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, resultset);
+
         }
     }
 }

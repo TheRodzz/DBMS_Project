@@ -7,11 +7,16 @@ public class Main {
     static ResultSet resultSet = null;
     static Scanner sc = new Scanner(System.in);
 
+    /**
+     * The main method of the application.
+     *
+     * @param args The command-line arguments.
+     */
     public static void main(String[] args) {
         try {
             while (true) {
                 System.out.println("Welcome to OTT Platform!");
-                System.out.println("Press 0 to exit, 1 to register a new account or 2 to login");
+                System.out.println("Press 0 to exit, 1 to register a new account, or 2 to login");
                 int choice = sc.nextInt();
                 sc.nextLine(); // consume new line character
                 if (choice == 0)
@@ -40,5 +45,4 @@ public class Main {
             sc.close();
         }
     }
-
 }

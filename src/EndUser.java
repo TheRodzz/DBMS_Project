@@ -11,6 +11,7 @@ public class EndUser implements UserInterface {
     @Override
     public void run(Scanner sc) {
         while (true) {
+            System.out.println("-------------------------------------");
             System.out.println("Select your choice");
             System.out.println("0. Logout");
             System.out.println("1. List the available media");
@@ -23,7 +24,7 @@ public class EndUser implements UserInterface {
             System.out.println("8. Search by language");
             System.out.println("9. Search by title");
             System.out.println("10. Get average rating of all media items");
-
+            System.out.println("-------------------------------------");
             int choice = sc.nextInt();
             sc.nextLine(); // consume new line
             if (choice == 0)
@@ -49,10 +50,15 @@ public class EndUser implements UserInterface {
             } else if (choice == 10) {
                 this.getAvgRating();
             }
+
         }
     }
 
+    /**
+     * Allows the user to watch a media item.
+     */
     private void watchMedia() {
+        System.out.println("-------------------------------------");
         System.out.println("Enter the ID of the media you want to watch");
         this.listMedia();
         int tid = InputHandler.getIDinput();
@@ -77,11 +83,16 @@ public class EndUser implements UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, null);
         }
     }
 
+    /**
+     * Retrieves the viewing history for the user.
+     */
     private void getHistory() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
@@ -101,11 +112,16 @@ public class EndUser implements UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, resultSet);
         }
     }
 
+    /**
+     * Retrieves the total watch time for the user.
+     */
     private void getWatchTime() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
@@ -120,7 +136,6 @@ public class EndUser implements UserInterface {
                 System.out.println("It looks like you have not watched any media on the OTT Platform yet.");
             } else {
                 while (true) {
-
                     watchTime = watchTime + resultSet.getInt("duration");
                     if (!resultSet.next())
                         break;
@@ -132,11 +147,16 @@ public class EndUser implements UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, resultSet);
         }
     }
 
+    /**
+     * Allows the user to update their profile information.
+     */
     private void updateProfile() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         User oldUser = this.user;
@@ -178,7 +198,7 @@ public class EndUser implements UserInterface {
                 System.out.println(this.user);
             } else {
                 System.out.println("Failed to update profile");
-                // this is done so that if update fails, the current user doesnt get attribute
+                // this is done so that if update fails, the current user doesn't get attribute
                 // values different from those stored in the database
                 this.user = oldUser;
             }
@@ -187,15 +207,20 @@ public class EndUser implements UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, null);
         }
     }
 
+    /**
+     * Allows the user to add a rating for a media item they have watched.
+     */
     private void addRating() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
-        System.out.println("Enter the ID of the media item you want to give rating to");
+        System.out.println("Enter the ID of the media item you want to give a rating to");
         this.listMedia();
         int tid = InputHandler.getIDinput();
         try {
@@ -207,7 +232,7 @@ public class EndUser implements UserInterface {
 
             resultSet = stmt.executeQuery();
             if (!resultSet.next()) {
-                System.out.println("You cannot give rating to media you have not watched");
+                System.out.println("You cannot give a rating to media you have not watched");
             } else {
                 double rating = InputHandler.getRatingInput();
                 String sql = "INSERT INTO Ratings VALUES (?,?,?)";
@@ -220,7 +245,7 @@ public class EndUser implements UserInterface {
                     DBConnection.commitTransaction(connection);
                     System.out.println("Rating added successfully");
                 } else {
-                    System.out.println("Falied to add rating");
+                    System.out.println("Failed to add rating");
                 }
             }
 
@@ -228,8 +253,8 @@ public class EndUser implements UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, resultSet);
         }
     }
-
 }

@@ -7,6 +7,11 @@ public class UserManager {
     static ResultSet resultSet = null;
     static Scanner sc = new Scanner(System.in);
 
+    /**
+     * Registers a new user by prompting for user details and storing them in the
+     * database.
+     * Users can register as either an end user or an admin user.
+     */
     public static void registerNewUser() {
         try {
             while (true) {
@@ -56,9 +61,11 @@ public class UserManager {
                     stmt1.setBoolean(4, isAdm);
                     int rowsAff = stmt1.executeUpdate();
                     if (rowsAff == 1) {
+                        DBConnection.commitTransaction(connection);
                         System.out.println("New user registered successfully! You can now proceed to login.");
                         break;
                     } else {
+                        DBConnection.rollbackTransaction(connection);
                         System.out.println("Failed to register new user. Try again.");
                     }
                 } catch (SQLException e) {
@@ -78,6 +85,15 @@ public class UserManager {
         }
     }
 
+    /**
+     * Performs user login by validating the entered username and password against
+     * the database.
+     * If the login is successful, it returns a UserInterface object based on the
+     * user's role (admin or end user).
+     *
+     * @return A UserInterface object representing the logged-in user, or null if
+     *         the login fails.
+     */
     public static UserInterface login() {
         try {
             while (true) {

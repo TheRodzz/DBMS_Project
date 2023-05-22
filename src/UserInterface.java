@@ -5,6 +5,7 @@ public interface UserInterface {
     void run(Scanner scanner);
 
     default void filterByGenre() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
@@ -25,7 +26,8 @@ public interface UserInterface {
                 while (true) {
                     String title = resultSet.getString("title");
                     System.out.println(title);
-                    if(!resultSet.next()) break;
+                    if (!resultSet.next())
+                        break;
                 }
             }
 
@@ -33,11 +35,13 @@ public interface UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, resultSet);
         }
     }
 
     default void filterByLanguage() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
@@ -58,7 +62,8 @@ public interface UserInterface {
                 while (true) {
                     String title = resultSet.getString("title");
                     System.out.println(title);
-                    if(!resultSet.next()) break;
+                    if (!resultSet.next())
+                        break;
                 }
             }
 
@@ -66,11 +71,13 @@ public interface UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(connection, stmt, resultSet);
         }
     }
 
     default void searchByTitle() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
@@ -113,6 +120,7 @@ public interface UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             // Close database resources
             DBConnection.closeResultSet(resultSet);
             DBConnection.closeStatement(stmt);
@@ -121,6 +129,7 @@ public interface UserInterface {
     }
 
     default void getAvgRating() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
@@ -158,6 +167,7 @@ public interface UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             // Close database resources
             DBConnection.closeResultSet(resultSet);
             DBConnection.closeStatement(stmt);
@@ -168,6 +178,7 @@ public interface UserInterface {
     // helper functions
 
     default void listGenres() {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -191,6 +202,7 @@ public interface UserInterface {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
         } finally {
+            System.out.println("-------------------------------------");
             // Close database resources
             DBConnection.closeResultSet(resultSet);
             DBConnection.closeStatement(statement);
@@ -199,6 +211,7 @@ public interface UserInterface {
     }
 
     default void displayAllLanguages() throws SQLException {
+        System.out.println("-------------------------------------");
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
@@ -217,6 +230,7 @@ public interface UserInterface {
                 System.out.println(lid + ". " + languageName);
             }
         } finally {
+            System.out.println("-------------------------------------");
             DBConnection.closeResources(null, stmt, resultSet);
         }
     }

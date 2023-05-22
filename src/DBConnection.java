@@ -1,21 +1,24 @@
 import java.sql.*;
 
-public class DBConnection{
-    // private static final String DB_URL = "jdbc:mysql://localhost:3306/ottplatform?characterEncoding=latin1&useConfigs=maxPerformance";
-    // private static final String USERNAME = "root";
-    // private static final String PASSWORD = "7349";
-
+public class DBConnection {
     private static Connection connection;
 
+    /**
+     * Retrieves a connection to the database.
+     *
+     * @return The database connection.
+     * @throws SQLException if a database access error occurs.
+     */
     public static Connection getConnection() throws SQLException {
         try {
             if (connection == null || connection.isClosed()) {
                 // Register the JDBC driver
                 Class.forName("com.mysql.cj.jdbc.Driver");
 
-                // Create a new connection
-                connection = DriverManager.getConnection(DBConfiguration.getDbUrl(), DBConfiguration.getUsername(), DBConfiguration.getPassword());
-                connection.setAutoCommit(false); // Disable auto-commit
+                // Create a new connection using DBConfiguration parameters
+                connection = DriverManager.getConnection(DBConfiguration.getDbUrl(), DBConfiguration.getUsername(),
+                        DBConfiguration.getPassword());
+                connection.setAutoCommit(false); // Disable auto-commit for transaction management
             }
         } catch (ClassNotFoundException e) {
             System.out.println("Could not find database driver: " + e.getMessage());
@@ -27,16 +30,21 @@ public class DBConnection{
         return connection;
     }
 
+    /**
+     * Closes the database connection.
+     *
+     * @param connection The database connection to close.
+     */
     public static void closeConnection(Connection connection) {
         try {
             if (connection != null) {
-                connection.commit();
+                connection.commit(); // Commit any pending changes before closing
                 connection.close();
                 // System.out.println("Connection closed");
             }
         } catch (SQLException e) {
             try {
-                connection.rollback();
+                connection.rollback(); // Rollback changes if closing the connection fails
             } catch (SQLException rollbackEx) {
                 System.out.println("Failed to rollback the transaction: " + rollbackEx.getMessage());
             }
@@ -44,12 +52,24 @@ public class DBConnection{
         }
     }
 
+    /**
+     * Closes the database resources: result set, statement, and connection.
+     *
+     * @param connection The database connection to close.
+     * @param statement  The statement to close.
+     * @param resultSet  The result set to close.
+     */
     public static void closeResources(Connection connection, Statement statement, ResultSet resultSet) {
         closeResultSet(resultSet);
         closeStatement(statement);
         closeConnection(connection);
     }
 
+    /**
+     * Closes the result set.
+     *
+     * @param resultSet The result set to close.
+     */
     public static void closeResultSet(ResultSet resultSet) {
         try {
             if (resultSet != null) {
@@ -61,6 +81,11 @@ public class DBConnection{
         }
     }
 
+    /**
+     * Closes the statement.
+     *
+     * @param statement The statement to close.
+     */
     public static void closeStatement(Statement statement) {
         try {
             if (statement != null) {
@@ -71,7 +96,12 @@ public class DBConnection{
             // Log the exception
         }
     }
-        
+
+    /**
+     * Commits a transaction.
+     *
+     * @param connection The database connection associated with the transaction.
+     */
     public static void commitTransaction(Connection connection) {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -82,6 +112,11 @@ public class DBConnection{
         }
     }
 
+    /**
+     * Rolls back a transaction.
+     *
+     * @param connection The database connection associated with the transaction.
+     */
     public static void rollbackTransaction(Connection connection) {
         try {
             if (connection != null && !connection.isClosed()) {
