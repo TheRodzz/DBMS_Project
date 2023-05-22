@@ -1,6 +1,7 @@
 import java.sql.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
 import java.text.SimpleDateFormat;
 
 public class AdminUser implements UserInterface {
@@ -21,6 +22,11 @@ public class AdminUser implements UserInterface {
                 System.out.println("2. Add a media item");
                 System.out.println("3. Delete a media item");
                 System.out.println("4. Update a media item");
+                System.out.println("5. Add a new language to the database");
+                System.out.println("6. Add a new language for an existing media item");
+                System.out.println("7. Get each viewers total watch time");
+                System.out.println("8. Get each media item's total play time across all users");
+                System.out.println("9. Get a performance report");
 
                 int choice;
                 try {
@@ -31,10 +37,9 @@ public class AdminUser implements UserInterface {
                     sc.nextLine(); // Consume invalid input
                     continue; // Restart the loop to prompt for input again
                 }
-                if(choice==0){
+                if (choice == 0) {
                     break;
-                }
-                else if (choice == 1) {
+                } else if (choice == 1) {
                     this.listMedia();
                 } else if (choice == 2) {
                     this.addMedia(sc);
@@ -42,10 +47,27 @@ public class AdminUser implements UserInterface {
                     this.deleteMedia(sc);
                 } else if (choice == 4) {
                     this.updateMedia(sc);
+                } else if (choice == 5) {
+                    this.addNewLanguage(sc);
+                } else if (choice == 6) {
+                    this.addMediaLanguage(sc);
+                } else if (choice == 7) {
+                    this.viewerWatchTimeStats(sc);
+                } else if (choice == 8) {
+                    this.mediaWatchTimeStats(sc);
+                } else if (choice == 9) {
+                    this.performanceReport(sc);
+                } else if (choice == 10) {
+                    this.filterByGenre(sc);
+                } else if (choice == 11) {
+                    this.filterByLanguage(sc);
+                } else if (choice == 12) {
+                    this.searchByTitle(sc);
+                } else if (choice == 13) {
+                    this.getAvgRating(sc);
                 }
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -106,19 +128,19 @@ public class AdminUser implements UserInterface {
         this.listMedia();
         int tid = scanner.nextInt();
         scanner.nextLine(); // Consume newline character
-    
+
         Connection connection = null;
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
         try {
             connection = DBConnection.getConnection();
-    
+
             // Fetch current media attributes
             String selectSql = "SELECT * FROM Media WHERE tid = ?";
             stmt = connection.prepareStatement(selectSql);
             stmt.setInt(1, tid);
             resultSet = stmt.executeQuery();
-    
+
             if (resultSet.next()) {
                 // Media item found, create a Media object with existing values
                 String title = resultSet.getString("title");
@@ -126,46 +148,47 @@ public class AdminUser implements UserInterface {
                 int duration = resultSet.getInt("duration");
                 String posterUrl = resultSet.getString("poster_url");
                 String trailerUrl = resultSet.getString("trailer_url");
-    
+
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                 String dateString = dateFormat.format(releaseDate);
                 Media media = new Media(tid, duration, title, dateString, posterUrl, trailerUrl);
-    
+
                 // Prompt the user to update each attribute of the media item
                 System.out.println("Current media details:");
                 System.out.println(media);
-    
+
                 System.out.println("Enter the new title (or press Enter to keep the current value):");
                 String newTitle = scanner.nextLine();
                 if (!newTitle.isEmpty()) {
                     media.setTitle(newTitle);
                 }
-    
-                System.out.println("Enter the new release date in the format (yyyy-MM-dd) (or press Enter to keep the current value):");
+
+                System.out.println(
+                        "Enter the new release date in the format (yyyy-MM-dd) (or press Enter to keep the current value):");
                 String newReleaseDateStr = scanner.nextLine();
                 if (!newReleaseDateStr.isEmpty()) {
                     media.setRelease_date(newReleaseDateStr);
                 }
-    
+
                 System.out.println("Enter the new duration in minutes (or press Enter to keep the current value):");
                 String newDurationStr = scanner.nextLine();
                 if (!newDurationStr.isEmpty()) {
                     int newDuration = Integer.parseInt(newDurationStr);
                     media.setDuration(newDuration);
                 }
-    
+
                 System.out.println("Enter the new poster URL (or press Enter to keep the current value):");
                 String newPosterUrl = scanner.nextLine();
                 if (!newPosterUrl.isEmpty()) {
                     media.setPoster_url(newPosterUrl);
                 }
-    
+
                 System.out.println("Enter the new trailer URL (or press Enter to keep the current value):");
                 String newTrailerUrl = scanner.nextLine();
                 if (!newTrailerUrl.isEmpty()) {
                     media.setTrailer_url(newTrailerUrl);
                 }
-    
+
                 // Update the media item in the database
                 String updateSql = "UPDATE Media SET title = ?, release_date = ?, duration = ?, poster_url = ?, trailer_url = ? WHERE tid = ?";
                 stmt = connection.prepareStatement(updateSql);
@@ -175,7 +198,7 @@ public class AdminUser implements UserInterface {
                 stmt.setString(4, media.getPoster_url());
                 stmt.setString(5, media.getTrailer_url());
                 stmt.setInt(6, media.getTid());
-    
+
                 int rows = stmt.executeUpdate();
                 if (rows == 1) {
                     System.out.println("The media item with tid " + tid + " has been updated successfully.");
@@ -194,4 +217,154 @@ public class AdminUser implements UserInterface {
             DBConnection.closeResources(connection, stmt, resultSet);
         }
     }
+
+    private void addNewLanguage(Scanner sc) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet resultSet = null;
+        System.out.println("Enter the language you want to add");
+        String lang = sc.nextLine();
+        try {
+            String sql = "INSERT INTO Languages (language) VALUES (?)";
+            connection = DBConnection.getConnection();
+            stmt = connection.prepareStatement(sql);
+            stmt.setString(1, lang);
+            int rows = stmt.executeUpdate();
+            if (rows == 1) {
+                System.out.println("New language " + lang + " has been added succuessfully");
+            } else {
+                System.out.println("Failed to add language " + lang);
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred while accessing the database:");
+            System.out.println("Error details: " + e.getMessage());
+        } finally {
+            DBConnection.closeResources(connection, stmt, resultSet);
+        }
+    }
+
+    private void addMediaLanguage(Scanner sc) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet resultSet = null;
+        System.out.println();
+        try {
+            System.out.println("Enter the Media ID (tid):");
+            this.listMedia();
+            int tid = sc.nextInt();
+
+            System.out.println("Enter the Language ID (lid):");
+            this.displayAllLanguages();
+            int lid = sc.nextInt();
+
+            // Check if the media and language IDs exist in their respective tables before
+            // adding them to the Media_Languages table
+            boolean mediaExists = checkMediaExistence(tid);
+            boolean languageExists = checkLanguageExistence(lid);
+
+            if (mediaExists && languageExists) {
+                // Execute the SQL query to insert the media-language mapping into the
+                // Media_Languages table
+                String sql = "INSERT INTO Media_Languages (tid, lid) VALUES (?, ?)";
+                connection = DBConnection.getConnection();
+                stmt = connection.prepareStatement(sql);
+                stmt.setInt(1, tid);
+                stmt.setInt(2, lid);
+
+                int rows = stmt.executeUpdate();
+
+                if (rows == 1) {
+                    System.out.println("New language added for the selected media successfully.");
+                } else {
+                    System.out.println("Failed to add the media-language mapping.");
+                }
+            } else {
+                System.out.println("Media or Language does not exist. Please make sure to enter valid IDs.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("An error occurred while accessing the database:");
+            System.out.println("Error details: " + e.getMessage());
+        } finally {
+            DBConnection.closeResources(connection, stmt, resultSet);
+        }
+    }
+
+    private void viewerWatchTimeStats(Scanner scanner) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet resultset = null;
+        try {
+            String sql = "SELECT SUM(duration) as time,n.name FROM (SELECT m.duration,vh.uid,u.name FROM Media m,View_History vh, User u WHERE m.tid=vh.tid AND u.uid=vh.uid ORDER BY vh.uid ) n GROUP BY n.name ORDER BY time DESC";
+            connection = DBConnection.getConnection();
+            stmt = connection.prepareStatement(sql);
+            resultset = stmt.executeQuery();
+            System.out.println("Total watch time for each user is as follows:");
+            while (resultset.next()) {
+                int time = resultset.getInt("time");
+                String name = resultset.getString("name");
+                System.out.println(name + " : " + time + " minutes");
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred while accessing the database:");
+            System.out.println("Error details: " + e.getMessage());
+        } finally {
+            DBConnection.closeConnection(connection);
+            DBConnection.closeStatement(stmt);
+        }
+    }
+
+    private void mediaWatchTimeStats(Scanner scanner) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet resultset = null;
+        try {
+            String sql = "SELECT COUNT(uid) as viewers,duration,title FROM View_History vh,Media m WHERE vh.tid=m.tid GROUP BY m.tid ORDER BY viewers*duration DESC";
+            connection = DBConnection.getConnection();
+            stmt = connection.prepareStatement(sql);
+            resultset = stmt.executeQuery();
+            System.out.println("Total watch time for each media is as follows:");
+            while (resultset.next()) {
+                int viewers = resultset.getInt("viewers");
+                int duration = resultset.getInt("duration");
+                System.out.println(resultset.getString("title") + " : " + viewers * duration + " minutes");
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred while accessing the database:");
+            System.out.println("Error details: " + e.getMessage());
+        } finally {
+            DBConnection.closeConnection(connection);
+            DBConnection.closeStatement(stmt);
+        }
+    }
+
+    private void performanceReport(Scanner scanner) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet resultset = null;
+        try {
+            // total watch time and total views
+
+            String sql = "SELECT SUM(duration) AS totalTime FROM (SELECT m.duration FROM Media m, View_History vh WHERE vh.tid=m.tid) t";
+            connection = DBConnection.getConnection();
+            stmt = connection.prepareStatement(sql);
+            resultset = stmt.executeQuery();
+            resultset.next();
+            int totalTime = resultset.getInt("totalTime");
+            sql = "SELECT COUNT(*) AS views FROM View_History";
+            stmt = connection.prepareStatement(sql);
+            resultset = stmt.executeQuery();
+            resultset.next();
+            int totalViewers = resultset.getInt("views");
+            System.out.println("Total platform watch time: " + totalTime + " minutes");
+            System.out.println("Total platform views: " + totalViewers);
+
+        } catch (Exception e) {
+            System.out.println("An error occurred while accessing the database:");
+            System.out.println("Error details: " + e.getMessage());
+        } finally {
+            DBConnection.closeResources(connection, stmt, resultset);
+        }
+    }
+
 }

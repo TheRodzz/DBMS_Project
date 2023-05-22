@@ -23,7 +23,7 @@ CREATE TABLE Media (
 
 CREATE TABLE Languages(
   lid INT AUTO_INCREMENT PRIMARY KEY,
-  language VARCHAR(50) NOT NULL
+  language VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE Media_Languages(
@@ -263,3 +263,32 @@ VALUES
     (3, 8, '2023-12-01 22:15:00'),
     (4, 9, '2023-01-02 23:30:00'),
     (5, 10, '2023-02-02 00:45:00');
+
+--Populating Media_Languages table
+INSERT INTO Media_Languages (tid, lid)
+VALUES
+    (1, 1), (1, 2), (1, 3),
+    (2, 2), (2, 3), (2, 4),
+    (3, 3), (3, 4), (3, 5),
+    (4, 4), (4, 5), (4, 6),
+    (5, 5), (5, 6), (5, 7),
+    (6, 6), (6, 7), (6, 8),
+    (7, 7), (7, 8), (7, 9),
+    (8, 8), (8, 9), (8, 10),
+    (9, 9), (9, 10), (9, 11),
+    (10, 10), (10, 11), (10, 12),
+    (11, 11), (11, 12), (11, 13),
+    (12, 12), (12, 13), (12, 14),
+    (13, 13), (13, 14), (13, 1),
+    (14, 14), (14, 1), (14, 2),
+    (15, 1), (15, 2), (15, 3);
+
+-- add random values for rating
+INSERT INTO Ratings (tid, uid, rating)
+SELECT m.tid, u.uid, ROUND(RAND() * 5, 1) AS rating
+FROM Media m
+CROSS JOIN User u
+WHERE m.tid BETWEEN 1 AND 15
+  AND u.uid BETWEEN 1 AND 21
+GROUP BY m.tid, u.uid
+HAVING COUNT(*) <= 5;

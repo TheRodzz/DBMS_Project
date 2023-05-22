@@ -1,12 +1,12 @@
 import java.sql.*;
 import java.util.Scanner;
 
-
 public class UserManager {
     static Connection connection = null;
     static Statement statement = null;
     static ResultSet resultSet = null;
     static Scanner sc = new Scanner(System.in);
+
     public static void registerNewUser() {
         try {
             while (true) {
@@ -16,7 +16,7 @@ public class UserManager {
                 Boolean isAdm = (adm == 1) ? false : true;
                 System.out.println("Enter your full name");
                 String name = sc.nextLine();
-                String user_name, pass, pass1;
+                String user_name, pass;
 
                 while (true) {
                     System.out.println("Enter username");
@@ -44,18 +44,7 @@ public class UserManager {
 
                 }
 
-                // while (true) {
-                //     System.out.println("Enter new password");
-                //     pass = sc.nextLine();
-                //     System.out.println("Re-enter password");
-                //     pass1 = sc.nextLine();
-                //     if (!pass.equals(pass1)) {
-                //         System.out.println("Password mismatch. Try again");
-                //     } else
-                //         break;
-                // }
-
-                pass=InputHandler.pwdInputAndConfirm(sc);
+                pass = InputHandler.pwdInputAndConfirm(sc);
 
                 String sql = "INSERT INTO User (name, user_name, password, isAdmin) VALUES (?,?, ?, ?)";
                 PreparedStatement stmt1 = null;
@@ -85,7 +74,7 @@ public class UserManager {
             // Log the exception
         } finally {
             // Close resources in a finally block
-            DBConnection.closeResources(connection,statement,resultSet);
+            DBConnection.closeResources(connection, statement, resultSet);
         }
     }
 
@@ -132,7 +121,7 @@ public class UserManager {
                     System.out.println("An error occurred while accessing the database:");
                     System.out.println("Error details: " + e.getMessage());
                     // Log the exception
-                } 
+                }
             }
         } catch (Exception e) {
             System.out.println("An unexpected error occurred: " + e.getMessage());
@@ -143,4 +132,5 @@ public class UserManager {
         }
         return null;
     }
+
 }

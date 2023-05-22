@@ -18,6 +18,11 @@ public class EndUser implements UserInterface {
             System.out.println("3. Get your viewing history");
             System.out.println("4. Check your total watch time");
             System.out.println("5. Update your profile");
+            System.out.println("6. To add rating for a media item");
+            System.out.println("7. Search by genre");
+            System.out.println("8. Search by language");
+            System.out.println("9. Search by title");
+            System.out.println("10. Get average rating of all media items");
 
             int choice = sc.nextInt();
             sc.nextLine(); // consume new line
@@ -33,8 +38,17 @@ public class EndUser implements UserInterface {
                 this.getWatchTime();
             } else if (choice == 5) {
                 this.updateProfile(sc);
+            } else if (choice == 6) {
+                this.addRating(sc);
+            } else if (choice == 7) {
+                this.filterByGenre(sc);
+            } else if (choice == 8) {
+                this.filterByLanguage(sc);
+            } else if (choice == 9) {
+                this.searchByTitle(sc);
+            } else if (choice == 10) {
+                this.getAvgRating(sc);
             }
-
         }
     }
 
@@ -102,16 +116,16 @@ public class EndUser implements UserInterface {
             stmt = connection.prepareStatement(sql);
             stmt.setInt(1, this.user.getUid());
             resultSet = stmt.executeQuery();
-            if(!resultSet.next()){
+            if (!resultSet.next()) {
                 System.out.println("It looks like you have not watched any media on the OTT Platform yet.");
-            }
-            else{
-                while(true){
+            } else {
+                while (true) {
 
                     watchTime = watchTime + resultSet.getInt("duration");
-                    if(!resultSet.next()) break;
+                    if (!resultSet.next())
+                        break;
                 }
-                System.out.println("You have watched media on OTT Platform for a total of "+watchTime+" minutes");
+                System.out.println("You have watched media on OTT Platform for a total of " + watchTime + " minutes");
             }
 
         } catch (Exception e) {
@@ -125,7 +139,7 @@ public class EndUser implements UserInterface {
     private void updateProfile(Scanner sc) {
         Connection connection = null;
         PreparedStatement stmt = null;
-        User oldUser=this.user;
+        User oldUser = this.user;
         try {
             System.out.println("Your current profile");
             System.out.println(this.user);
@@ -143,33 +157,31 @@ public class EndUser implements UserInterface {
             }
 
             System.out.println("Do you want to change your password? Y/N");
-            String choice=sc.nextLine();
-            if(choice.charAt(0)=='Y' || choice.charAt(0)=='y'){
-                String newPass=InputHandler.pwdInputAndConfirm(sc);
+            String choice = sc.nextLine();
+            if (choice.charAt(0) == 'Y' || choice.charAt(0) == 'y') {
+                String newPass = InputHandler.pwdInputAndConfirm(sc);
                 this.user.setPassword(newPass);
             }
 
-            String sql="UPDATE User SET name = ?, user_name = ?, password = ? WHERE uid = ?";
-            connection=DBConnection.getConnection();
-            stmt=connection.prepareStatement(sql);
+            String sql = "UPDATE User SET name = ?, user_name = ?, password = ? WHERE uid = ?";
+            connection = DBConnection.getConnection();
+            stmt = connection.prepareStatement(sql);
             stmt.setString(1, this.user.getName());
-            stmt.setString(2, this.user.getUser_name()); 
+            stmt.setString(2, this.user.getUser_name());
             stmt.setString(3, this.user.getPassword());
             stmt.setInt(4, this.user.getUid());
 
-            int rows=stmt.executeUpdate();
-            if(rows==1){
+            int rows = stmt.executeUpdate();
+            if (rows == 1) {
                 System.out.println("Profile updated successfully. Here is the updated profile:");
                 System.out.println(this.user);
-            }
-            else {
+            } else {
                 System.out.println("Failed to update profile");
-                // this is done so that if update fails, the current user doesnt get attribute values different from those stored in the database
-                this.user=oldUser;
+                // this is done so that if update fails, the current user doesnt get attribute
+                // values different from those stored in the database
+                this.user = oldUser;
             }
 
-            
-            
         } catch (Exception e) {
             System.out.println("An error occurred while accessing the database:");
             System.out.println("Error details: " + e.getMessage());
@@ -177,4 +189,46 @@ public class EndUser implements UserInterface {
             DBConnection.closeResources(connection, stmt, null);
         }
     }
+
+    private void addRating(Scanner sc) {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet resultSet = null;
+        System.out.println("Enter the ID of the media item you want to give rating to");
+        this.listMedia();
+        int tid = sc.nextInt();
+        sc.nextLine(); // consume new line char
+        try {
+            String check = "SELECT uid FROM View_History WHERE uid = ? AND tid = ?";
+            connection = DBConnection.getConnection();
+            stmt = connection.prepareStatement(check);
+            stmt.setInt(1, this.user.getUid());
+            stmt.setInt(2, tid);
+
+            resultSet = stmt.executeQuery();
+            if (!resultSet.next()) {
+                System.out.println("You cannot give rating to media you have not watched");
+            } else {
+                int rating = InputHandler.getRatingInput(sc);
+                String sql = "INSERT INTO Rating VALUES (?,?,?)";
+                stmt = connection.prepareStatement(sql);
+                stmt.setInt(1, tid);
+                stmt.setInt(2, this.user.getUid());
+                stmt.setInt(3, rating);
+                int rows = stmt.executeUpdate();
+                if (rows == 1) {
+                    System.out.println("Rating added successfully");
+                } else {
+                    System.out.println("Falied to add rating");
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("An error occurred while accessing the database:");
+            System.out.println("Error details: " + e.getMessage());
+        } finally {
+            DBConnection.closeResources(connection, stmt, resultSet);
+        }
+    }
+
 }

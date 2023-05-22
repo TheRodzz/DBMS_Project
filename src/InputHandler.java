@@ -1,4 +1,3 @@
-import java.sql.Date;
 import java.util.Scanner;
 
 public class InputHandler {
@@ -38,4 +37,21 @@ public class InputHandler {
         }
         return pass;
     }
+
+    public static int getRatingInput(Scanner sc) {
+        int rating = 0;
+        while (true) {
+            System.out.println("Enter rating");
+            rating = sc.nextInt();
+            sc.nextLine(); // consume newline char
+            if (rating >= 0 && rating <= 5)
+                return rating;
+            else {
+                System.out.println("Invalid input. Rating must be between 0 and 5.");
+                System.out.println("Try Again");
+            }
+        }
+
+    }
+
 }

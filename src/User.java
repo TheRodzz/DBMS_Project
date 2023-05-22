@@ -53,7 +53,7 @@ public class User {
         return this.isAdmin;
 
     }
-    
+
     public void setIsAdmin(Boolean isAdmin) {
         this.isAdmin = isAdmin;
     }
@@ -61,11 +61,11 @@ public class User {
     @Override
     public String toString() {
         return "{" +
-            " uid='" + getUid() + "'" +
-            ", name='" + getName() + "'" +
-            ", user_name='" + getUser_name() + "'" +
-            ", password='" + getPassword() + "'" +
-            ", isAdmin='" + isIsAdmin() + "'" +
-            "}";
-    } 
+                " uid='" + getUid() + "'" +
+                ", name='" + getName() + "'" +
+                ", user_name='" + getUser_name() + "'" +
+                ", password='" + getPassword() + "'" +
+                ", isAdmin='" + isIsAdmin() + "'" +
+                "}";
+    }
 }
