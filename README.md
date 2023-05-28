@@ -21,7 +21,7 @@ git clone https://github.com/TheRodzz/DBMS_Project
 2. Navigate to the project directory:
 
 ```
-cd DBMS_Project
+cd OTT-Platform-master
 ```
 
 3. Set up the database:
